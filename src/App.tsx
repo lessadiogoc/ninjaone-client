@@ -1,51 +1,40 @@
 import { Layout } from './components/Layout/Layout'
 import NinjaOneLogo from './assets/NinjaOneLogo.svg'
-import appleIcon from './assets/apple.svg'
-import windowsIcon from './assets/windows.svg'
-import linuxIcon from './assets/linux.svg'
+import AppleIcon from './assets/apple.svg?react'
+import WindowsIcon from './assets/windows.svg?react'
+import LinuxIcon from './assets/linux.svg?react'
+import Plus from './assets/plus.svg?react'
+import Refresh from './assets/refresh.svg?react'
 import { Modal } from './components/Modal/Modal'
+import { Button } from './components/Button/Button'
+import { ReactElement, useEffect, useState } from 'react'
+import { getDevices } from './data/get-devices'
 
-type DEVICE = 'windows' | 'linux' | 'mac'
-
-const devices = [
-  {
-    id: 1,
-    name: 'DESKTOP-0VCBIFF',
-    type: 'windows',
-    hdd_capacity: 128,
-  },
-  {
-    id: 2,
-    name: 'LINUX-SMITH-J',
-    type: 'linux',
-    hdd_capacity: 64,
-  },
-  {
-    id: 3,
-    name: 'WINXP-125498HQ',
-    type: 'windows',
-    hdd_capacity: 64,
-  },
-  {
-    id: 4,
-    name: 'MAC-SMITH-JOHN',
-    type: 'mac',
-    hdd_capacity: 64,
-  },
-]
-
-const DEVICE_LABELS = {
-  windows: 'Windows workstation',
-  linux: 'Linux workstation',
-  mac: 'Mac workstation',
+type Device = {
+  id: string
+  system_name: string
+  type: 'WINDOWS' | 'LINUX' | 'MAC'
+  hdd_capacity: string
 }
-const DEVICE_ICONS = {
-  windows: windowsIcon,
-  linux: linuxIcon,
-  mac: appleIcon,
+
+const DEVICE_LABELS: Record<Device['type'], string> = {
+  WINDOWS: 'Windows workstation',
+  LINUX: 'Linux workstation',
+  MAC: 'Mac workstation',
+}
+const DEVICE_ICONS: Record<Device['type'], ReactElement> = {
+  WINDOWS: <WindowsIcon />,
+  LINUX: <LinuxIcon />,
+  MAC: <AppleIcon />,
 }
 
 function App() {
+  const [devices, setDevices] = useState([])
+
+  useEffect(() => {
+    getDevices().then((data) => setDevices(data))
+  }, [])
+
   return (
     <>
       <header style={{ background: '#002a42' }}>
@@ -59,7 +48,9 @@ function App() {
         {/* title */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1>Devices</h1>
-          <button>Add Device</button>
+          <Button variant="primary" icon={<Plus />}>
+            Add Device
+          </Button>
         </div>
 
         {/* filter */}
@@ -76,17 +67,20 @@ function App() {
               <option value="mac">Mac</option>
             </select>
             <select name="sortBy">
-              <option value="HDD_DESC">HDD Capacity (Descending)</option>
-              <option value="HDD_ASC">HDD Capacity (Ascending)</option>
+              <option value="hdd_desc">HDD Capacity (Descending)</option>
+              <option value="hdd_asc">HDD Capacity (Ascending)</option>
+              <option value="name_desc">Name (Descending)</option>
+              <option value="name_asc">Name (Ascending)</option>
             </select>
           </div>
-          <button type="submit">Filter</button>
+          <Button type="submit" icon={<Refresh />} variant="flat" />
         </form>
 
         {/* table */}
         <div>
-          {devices.map((device) => (
+          {devices.map((device: Device) => (
             <div
+              key={device.id}
               style={{
                 padding: 16,
                 borderBottom: '1px solid #E7E8EB',
@@ -96,12 +90,12 @@ function App() {
               }}
             >
               <div>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <img src={DEVICE_ICONS[device.type as DEVICE]} />
-                  {device.name}
-                </h3>
-                <p>
-                  {DEVICE_LABELS[device.type as DEVICE]} - {device.hdd_capacity} GB
+                <div className="flex items-center gap-1 text-md text-gray-800">
+                  {DEVICE_ICONS[device.type]}
+                  <h3>{device.system_name}</h3>
+                </div>
+                <p className="text-gray-500 text-sm">
+                  {DEVICE_LABELS[device.type]} - {device.hdd_capacity} GB
                 </p>
               </div>
               <div>
