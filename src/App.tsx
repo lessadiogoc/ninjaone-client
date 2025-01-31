@@ -10,6 +10,7 @@ import { Button } from './components/Button/Button'
 import { ReactElement, useEffect, useState } from 'react'
 import { getDevices } from './data/get-devices'
 import { createDevice } from './data/create-device'
+import { deleteDevice } from './data/delete-device'
 
 type Device = {
   id: string
@@ -32,6 +33,7 @@ const DEVICE_ICONS: Record<Device['type'], ReactElement> = {
 function App() {
   const [devices, setDevices] = useState([])
   const [newDeviceModalOpen, setNewDeviceModalOpen] = useState(false)
+  const [deviceToDelete, setDeviceToDelete] = useState<Device>()
 
   const fetchDevices = () => {
     getDevices().then((data) => setDevices(data))
@@ -49,6 +51,20 @@ function App() {
     createDevice(body).then(() => {
       setNewDeviceModalOpen(false)
       fetchDevices()
+    })
+  }
+
+  const handleDeviceDelete = async () => {
+    if (!deviceToDelete) return
+
+    deleteDevice(deviceToDelete.id).then((deleted) => {
+      if (deleted) {
+        setDeviceToDelete(undefined)
+        fetchDevices()
+      } else {
+        // Modify error notification
+        alert('Failed to delete device')
+      }
     })
   }
 
@@ -117,7 +133,7 @@ function App() {
               </div>
               <div>
                 <button>Edit</button>
-                <button>Delete</button>
+                <button onClick={() => setDeviceToDelete({ ...device })}>Delete</button>
               </div>
             </div>
           ))}
@@ -145,6 +161,15 @@ function App() {
             Add Device
           </Button>
         </form>
+      </Modal>
+      <Modal open={Boolean(deviceToDelete)} title="Delete device?" onClose={() => setDeviceToDelete(undefined)}>
+        <p>You are about to delete the device {deviceToDelete?.system_name}. This action cannot be undone.</p>
+        <Button variant="secondary" onClick={() => setDeviceToDelete(undefined)}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={handleDeviceDelete}>
+          Delete
+        </Button>
       </Modal>
     </>
   )
