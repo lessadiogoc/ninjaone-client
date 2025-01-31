@@ -9,6 +9,7 @@ import { Modal } from './components/Modal/Modal'
 import { Button } from './components/Button/Button'
 import { ReactElement, useEffect, useState } from 'react'
 import { getDevices } from './data/get-devices'
+import { createDevice } from './data/create-device'
 
 type Device = {
   id: string
@@ -30,10 +31,26 @@ const DEVICE_ICONS: Record<Device['type'], ReactElement> = {
 
 function App() {
   const [devices, setDevices] = useState([])
+  const [newDeviceModalOpen, setNewDeviceModalOpen] = useState(false)
+
+  const fetchDevices = () => {
+    getDevices().then((data) => setDevices(data))
+  }
 
   useEffect(() => {
-    getDevices().then((data) => setDevices(data))
+    fetchDevices()
   }, [])
+
+  const handleDeviceCreate = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const body = Object.fromEntries(formData.entries())
+
+    createDevice(body).then(() => {
+      setNewDeviceModalOpen(false)
+      fetchDevices()
+    })
+  }
 
   return (
     <>
@@ -48,7 +65,7 @@ function App() {
         {/* title */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1>Devices</h1>
-          <Button variant="primary" icon={<Plus />}>
+          <Button variant="primary" icon={<Plus />} onClick={() => setNewDeviceModalOpen(true)}>
             Add Device
           </Button>
         </div>
@@ -106,9 +123,29 @@ function App() {
           ))}
         </div>
       </Layout>
-      {/* <Modal open={true} title="Add Device" onClose={() => console.log('closing...')}>
-        <p>Lorem ipsum dolor</p>
-      </Modal> */}
+      <Modal open={newDeviceModalOpen} title="Add Device" onClose={() => setNewDeviceModalOpen(false)}>
+        <form onSubmit={handleDeviceCreate}>
+          <div>
+            <input type="text" name="system_name" placeholder="system name" required />
+          </div>
+          <div>
+            <select name="type" required>
+              <option value="WINDOWS">Windows</option>
+              <option value="LINUX">Linux</option>
+              <option value="MAC">Mac</option>
+            </select>
+          </div>
+          <div>
+            <input type="text" name="hdd_capacity" placeholder="hdd capacity" required />
+          </div>
+          <Button variant="secondary" onClick={() => setNewDeviceModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            Add Device
+          </Button>
+        </form>
+      </Modal>
     </>
   )
 }
