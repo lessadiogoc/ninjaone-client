@@ -1,0 +1,32 @@
+.button {
+  padding: 12px;
+  border-radius: 4px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  border: none;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+}
+
+.button:hover {
+  opacity: 0.95;
+}
+
+.button--primary {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.button--danger {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+.button--flat {
+  background-color: transparent;
+  color: var(--text-darker);
+}
