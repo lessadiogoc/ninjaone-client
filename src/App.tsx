@@ -13,6 +13,7 @@ import { createDevice } from './data/create-device'
 import { deleteDevice } from './data/delete-device'
 import { Device, DeviceType } from './types'
 import { EditDeviceModal } from './containers/EditDeviceModal'
+import { CreateDeviceModal } from './containers/CreateDeviceModal'
 
 const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
@@ -38,16 +39,6 @@ function App() {
   useEffect(() => {
     fetchDevices()
   }, [])
-
-  const handleDeviceCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const body = Object.fromEntries(formData.entries())
-
-    await createDevice(body)
-    setNewDeviceModalOpen(false)
-    fetchDevices()
-  }
 
   const handleDeviceDelete = async () => {
     if (!deviceToDelete) return
@@ -138,29 +129,7 @@ function App() {
           ))}
         </div>
       </Layout>
-      <Modal open={newDeviceModalOpen} title="Add Device" onClose={() => setNewDeviceModalOpen(false)}>
-        <form onSubmit={handleDeviceCreate}>
-          <div>
-            <input type="text" name="system_name" placeholder="system name" required />
-          </div>
-          <div>
-            <select name="type" required>
-              <option value="WINDOWS">Windows</option>
-              <option value="LINUX">Linux</option>
-              <option value="MAC">Mac</option>
-            </select>
-          </div>
-          <div>
-            <input type="text" name="hdd_capacity" placeholder="hdd capacity" required />
-          </div>
-          <Button variant="secondary" onClick={() => setNewDeviceModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="primary">
-            Add Device
-          </Button>
-        </form>
-      </Modal>
+
       <Modal open={Boolean(deviceToDelete)} title="Delete device?" onClose={() => setDeviceToDelete(undefined)}>
         <p>You are about to delete the device {deviceToDelete?.system_name}. This action cannot be undone.</p>
         <Button variant="secondary" onClick={() => setDeviceToDelete(undefined)}>
@@ -170,6 +139,11 @@ function App() {
           Delete
         </Button>
       </Modal>
+      <CreateDeviceModal
+        open={newDeviceModalOpen}
+        onClose={() => setNewDeviceModalOpen(false)}
+        onCreateCallback={fetchDevices}
+      />
       <EditDeviceModal device={deviceToEdit} onEditCallback={onEditCallback} />
     </>
   )
