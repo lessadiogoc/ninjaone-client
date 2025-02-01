@@ -7,13 +7,14 @@ import Plus from './assets/plus.svg?react'
 import SearchIcon from './assets/search.svg?react'
 import Refresh from './assets/refresh.svg?react'
 import { Button } from './components/Button/Button'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { getDevices } from './data/get-devices'
 import { EditDeviceModal } from './containers/EditDeviceModal'
 import { CreateDeviceModal } from './containers/CreateDeviceModal'
 import { DeleteDeviceModal } from './containers/DeleteDeviceModal'
 import { Device, DeviceType } from './types'
 import { Input } from './components/Input/Input'
+import { Select } from './components/Select/Select'
 
 const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
@@ -25,12 +26,69 @@ const DEVICE_ICONS: Record<DeviceType, ReactElement> = {
   LINUX: <LinuxIcon />,
   MAC: <AppleIcon />,
 }
+const DEVICE_OPTIONS = [
+  { label: 'All', value: 'ALL' },
+  { label: 'Windows', value: 'WINDOWS' },
+  { label: 'Linux', value: 'LINUX' },
+  { label: 'Mac', value: 'MAC' },
+]
+const SORT_OPTIONS = [
+  { label: 'HDD Capacity (Descending)', value: 'hdd_desc' },
+  { label: 'HDD Capacity (Ascending)', value: 'hdd_asc' },
+  { label: 'Name (Descending)', value: 'name_desc' },
+  { label: 'Name (Ascending)', value: 'name_asc' },
+]
 
 function App() {
-  const [devices, setDevices] = useState([])
+  const [devices, setDevices] = useState<Device[]>([])
   const [newDeviceModalOpen, setNewDeviceModalOpen] = useState(false)
   const [deviceToDelete, setDeviceToDelete] = useState<Device>()
   const [deviceToEdit, setDeviceToEdit] = useState<Device>()
+  const [filters, setFilters] = useState({
+    deviceType: 'ALL',
+    sortBy: 'hdd_desc',
+    search: '',
+  })
+
+  const filteredDevices = useMemo(() => {
+    let result: Device[] = devices
+    const { search, deviceType, sortBy } = filters
+
+    if (search) {
+      result = result.filter((device) => device.system_name.toUpperCase().includes(search.toUpperCase()))
+    }
+
+    if (deviceType !== 'ALL') {
+      result = result.filter((device) => device.type === deviceType)
+    }
+
+    // sort
+    result.sort((a, b) => {
+      if (sortBy === 'hdd_desc') {
+        return Number(b.hdd_capacity) - Number(a.hdd_capacity)
+      }
+
+      if (sortBy === 'hdd_asc') {
+        return Number(a.hdd_capacity) - Number(b.hdd_capacity)
+      }
+
+      if (sortBy === 'name_desc') {
+        return b.system_name.localeCompare(a.system_name)
+      }
+
+      if (sortBy === 'name_asc') {
+        return a.system_name.localeCompare(b.system_name)
+      }
+    })
+
+    return result
+  }, [filters, devices])
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+
+    setFilters({ ...filters, [name]: value })
+  }
 
   const fetchDevices = async () => {
     const data = await getDevices()
@@ -50,56 +108,32 @@ function App() {
     <>
       <header style={{ background: '#002a42' }}>
         <Layout>
-          <div style={{ height: 50, display: 'flex', alignItems: 'center' }}>
+          <div className="flex items-center" style={{ height: 50 }}>
             <img src={NinjaOneLogo} className="logo" alt="Ninja One" width="120" />
           </div>
         </Layout>
       </header>
       <Layout>
-        {/* title */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1>Devices</h1>
+        <div className="flex justify-between items-center my-6">
+          <h1 className="text-2xl font-medium">Devices</h1>
           <Button variant="primary" icon={<Plus />} onClick={() => setNewDeviceModalOpen(true)}>
             Add Device
           </Button>
         </div>
 
-        {/* filter */}
-        <form
-          onSubmit={(e) => console.log('submitting...')}
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        >
+        <div className="flex justify-between items-center mb-5">
           <div style={{ display: 'flex', gap: 8 }}>
-            <Input icon={<SearchIcon />} name="search" placeholder="Search" />
-            <select name="deviceType">
-              <option value="all">All</option>
-              <option value="windows">Windows</option>
-              <option value="linux">Linux</option>
-              <option value="mac">Mac</option>
-            </select>
-            <select name="sortBy">
-              <option value="hdd_desc">HDD Capacity (Descending)</option>
-              <option value="hdd_asc">HDD Capacity (Ascending)</option>
-              <option value="name_desc">Name (Descending)</option>
-              <option value="name_asc">Name (Ascending)</option>
-            </select>
+            <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={handleFilterChange} />
+            <Select name="deviceType" options={DEVICE_OPTIONS} onChange={handleFilterChange} />
+            <Select name="sortBy" options={SORT_OPTIONS} onChange={handleFilterChange} />
           </div>
           <Button type="submit" icon={<Refresh />} variant="flat" />
-        </form>
+        </div>
 
-        {/* table */}
         <div>
-          {devices.map((device: Device) => (
-            <div
-              key={device.id}
-              style={{
-                padding: 16,
-                borderBottom: '1px solid #E7E8EB',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
+          {filteredDevices.length === 0 && <p>No devices found.</p>}
+          {filteredDevices.map((device: Device) => (
+            <div key={device.id} className="flex items-center justify-between p-4 border-b-gray-200 border-b-1">
               <div>
                 <div className="flex items-center gap-1 text-md text-gray-800">
                   {DEVICE_ICONS[device.type]}
