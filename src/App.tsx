@@ -11,20 +11,15 @@ import { ReactElement, useEffect, useState } from 'react'
 import { getDevices } from './data/get-devices'
 import { createDevice } from './data/create-device'
 import { deleteDevice } from './data/delete-device'
+import { Device, DeviceType } from './types'
+import { EditDeviceModal } from './containers/EditDeviceModal'
 
-type Device = {
-  id: string
-  system_name: string
-  type: 'WINDOWS' | 'LINUX' | 'MAC'
-  hdd_capacity: string
-}
-
-const DEVICE_LABELS: Record<Device['type'], string> = {
+const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
   LINUX: 'Linux workstation',
   MAC: 'Mac workstation',
 }
-const DEVICE_ICONS: Record<Device['type'], ReactElement> = {
+const DEVICE_ICONS: Record<DeviceType, ReactElement> = {
   WINDOWS: <WindowsIcon />,
   LINUX: <LinuxIcon />,
   MAC: <AppleIcon />,
@@ -34,6 +29,7 @@ function App() {
   const [devices, setDevices] = useState([])
   const [newDeviceModalOpen, setNewDeviceModalOpen] = useState(false)
   const [deviceToDelete, setDeviceToDelete] = useState<Device>()
+  const [deviceToEdit, setDeviceToEdit] = useState<Device>()
 
   const fetchDevices = () => {
     getDevices().then((data) => setDevices(data))
@@ -43,29 +39,32 @@ function App() {
     fetchDevices()
   }, [])
 
-  const handleDeviceCreate = async (e) => {
+  const handleDeviceCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target)
     const body = Object.fromEntries(formData.entries())
 
-    createDevice(body).then(() => {
-      setNewDeviceModalOpen(false)
-      fetchDevices()
-    })
+    await createDevice(body)
+    setNewDeviceModalOpen(false)
+    fetchDevices()
   }
 
   const handleDeviceDelete = async () => {
     if (!deviceToDelete) return
 
-    deleteDevice(deviceToDelete.id).then((deleted) => {
-      if (deleted) {
-        setDeviceToDelete(undefined)
-        fetchDevices()
-      } else {
-        // Modify error notification
-        alert('Failed to delete device')
-      }
-    })
+    const deleted = await deleteDevice(deviceToDelete.id)
+    if (deleted) {
+      setDeviceToDelete(undefined)
+      fetchDevices()
+    } else {
+      // Modify error notification
+      alert('Failed to delete device')
+    }
+  }
+
+  const onEditCallback = async () => {
+    setDeviceToEdit(undefined)
+    fetchDevices()
   }
 
   return (
@@ -132,7 +131,7 @@ function App() {
                 </p>
               </div>
               <div>
-                <button>Edit</button>
+                <button onClick={() => setDeviceToEdit({ ...device })}>Edit</button>
                 <button onClick={() => setDeviceToDelete({ ...device })}>Delete</button>
               </div>
             </div>
@@ -171,6 +170,7 @@ function App() {
           Delete
         </Button>
       </Modal>
+      <EditDeviceModal device={deviceToEdit} onEditCallback={onEditCallback} />
     </>
   )
 }

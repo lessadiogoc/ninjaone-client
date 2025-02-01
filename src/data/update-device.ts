@@ -1,13 +1,11 @@
-// fetch devices from localhost:3000/devices
+import { Device } from '../types'
 
-type Body = {
-  system_name: string
-  type: 'WINDOWS' | 'LINUX' | 'MAC'
-  hdd_capacity: string
-}
-
-export const updateDevice = async (id: string, body: Body) => {
-  const response = await fetch('http://localhost:3000/devices/' + id, { method: 'put', body: JSON.stringify(body) })
+export const updateDevice = async (device: Device) => {
+  const response = await fetch('http://localhost:3000/devices/' + device.id, {
+    headers: { 'Content-Type': 'application/json' },
+    method: 'put',
+    body: JSON.stringify(device),
+  })
   const updated = await response.json()
   return updated
 }
