@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import closeIcon from '../../assets/close.svg'
+import CloseIcon from '../../assets/close.svg?react'
+import { Button } from '../Button/Button'
 import './modal.css'
 
 type Props = {
@@ -15,18 +15,16 @@ export const Modal = ({ open, title, onClose, children }: Props) => {
   }
 
   return (
-    <>
-      <div className="modal-overlay">
-        <div className="modal">
-          <div className="modal-header">
-            <h4>{title}</h4>
-            <button onClick={onClose}>
-              <img src={closeIcon} />
-            </button>
-          </div>
-          {children}
+    <div className="modal-overlay">
+      <div className="modal">
+        <div className="flex items-center justify-between mb-3.5">
+          <h4 className="text-2xl font-medium">{title}</h4>
+          <Button variant="flat" onClick={onClose}>
+            <CloseIcon />
+          </Button>
         </div>
+        {children}
       </div>
-    </>
+    </div>
   )
 }

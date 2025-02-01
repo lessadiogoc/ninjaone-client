@@ -1,5 +1,5 @@
 .button {
-  padding: 12px;
+  height: 38px;
   border-radius: 4px;
   display: inline-flex;
   justify-content: center;
@@ -9,7 +9,6 @@
   border: none;
   font-size: 14px;
   line-height: 14px;
-  font-weight: 500;
 }
 
 .button:hover {
@@ -19,6 +18,12 @@
 .button--primary {
   background-color: var(--primary);
   color: #ffffff;
+}
+
+.button--secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid #d1d0d9;
 }
 
 .button--danger {

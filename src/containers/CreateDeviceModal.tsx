@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { Modal } from '../components/Modal/Modal'
 import { Button } from '../components/Button/Button'
-import { ReactElement, useEffect, useState } from 'react'
 import { Device } from '../types'
 import { createDevice } from '../data/create-device'
+import { Input } from '../components/Input/Input'
 
 interface Props {
   onCreateCallback?: () => void
@@ -35,13 +36,13 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
   }
 
   return (
-    <Modal open={open} title="Add Device" onClose={onClose}>
+    <Modal open={open} title="Add device" onClose={onClose}>
       <form onSubmit={handleSubmit}>
         <div>
-          <input
+          <Input
+            label="System name"
             type="text"
             name="system_name"
-            placeholder="system name"
             onChange={handleInputChange}
             value={newDevice.system_name}
             required
@@ -55,21 +56,23 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
           </select>
         </div>
         <div>
-          <input
-            type="text"
+          <Input
+            label="HDD capacity (GB)"
+            type="number"
             name="hdd_capacity"
-            placeholder="hdd capacity"
             onChange={handleInputChange}
             value={newDevice.hdd_capacity}
             required
           />
         </div>
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button type="submit" variant="primary">
-          Add Device
-        </Button>
+        <div className="flex justify-end mt-2 gap-2">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            Add Device
+          </Button>
+        </div>
       </form>
     </Modal>
   )

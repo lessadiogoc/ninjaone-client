@@ -4,16 +4,16 @@ import AppleIcon from './assets/apple.svg?react'
 import WindowsIcon from './assets/windows.svg?react'
 import LinuxIcon from './assets/linux.svg?react'
 import Plus from './assets/plus.svg?react'
+import SearchIcon from './assets/search.svg?react'
 import Refresh from './assets/refresh.svg?react'
-import { Modal } from './components/Modal/Modal'
 import { Button } from './components/Button/Button'
 import { ReactElement, useEffect, useState } from 'react'
 import { getDevices } from './data/get-devices'
-import { createDevice } from './data/create-device'
-import { deleteDevice } from './data/delete-device'
-import { Device, DeviceType } from './types'
 import { EditDeviceModal } from './containers/EditDeviceModal'
 import { CreateDeviceModal } from './containers/CreateDeviceModal'
+import { DeleteDeviceModal } from './containers/DeleteDeviceModal'
+import { Device, DeviceType } from './types'
+import { Input } from './components/Input/Input'
 
 const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
@@ -32,26 +32,14 @@ function App() {
   const [deviceToDelete, setDeviceToDelete] = useState<Device>()
   const [deviceToEdit, setDeviceToEdit] = useState<Device>()
 
-  const fetchDevices = () => {
-    getDevices().then((data) => setDevices(data))
+  const fetchDevices = async () => {
+    const data = await getDevices()
+    setDevices(data)
   }
 
   useEffect(() => {
     fetchDevices()
   }, [])
-
-  const handleDeviceDelete = async () => {
-    if (!deviceToDelete) return
-
-    const deleted = await deleteDevice(deviceToDelete.id)
-    if (deleted) {
-      setDeviceToDelete(undefined)
-      fetchDevices()
-    } else {
-      // Modify error notification
-      alert('Failed to delete device')
-    }
-  }
 
   const onEditCallback = async () => {
     setDeviceToEdit(undefined)
@@ -82,7 +70,7 @@ function App() {
           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
           <div style={{ display: 'flex', gap: 8 }}>
-            <input type="text" name="search" placeholder="Search" />
+            <Input icon={<SearchIcon />} name="search" placeholder="Search" />
             <select name="deviceType">
               <option value="all">All</option>
               <option value="windows">Windows</option>
@@ -130,15 +118,11 @@ function App() {
         </div>
       </Layout>
 
-      <Modal open={Boolean(deviceToDelete)} title="Delete device?" onClose={() => setDeviceToDelete(undefined)}>
-        <p>You are about to delete the device {deviceToDelete?.system_name}. This action cannot be undone.</p>
-        <Button variant="secondary" onClick={() => setDeviceToDelete(undefined)}>
-          Cancel
-        </Button>
-        <Button variant="danger" onClick={handleDeviceDelete}>
-          Delete
-        </Button>
-      </Modal>
+      <DeleteDeviceModal
+        device={deviceToDelete}
+        onClose={() => setDeviceToDelete(undefined)}
+        onDeleteCallback={fetchDevices}
+      />
       <CreateDeviceModal
         open={newDeviceModalOpen}
         onClose={() => setNewDeviceModalOpen(false)}

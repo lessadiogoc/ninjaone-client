@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react'
 import { Modal } from '../components/Modal/Modal'
 import { Button } from '../components/Button/Button'
-import { ReactElement, useEffect, useState } from 'react'
 import { Device } from '../types'
 import { updateDevice } from '../data/update-device'
+import { Input } from '../components/Input/Input'
 
 interface Props {
   device?: Device
@@ -30,7 +31,7 @@ export const EditDeviceModal = ({ device, onEditCallback }: Props) => {
     onEditCallback?.()
   }
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
 
     setNewDevice({ ...newDevice, [name]: value })
@@ -40,13 +41,12 @@ export const EditDeviceModal = ({ device, onEditCallback }: Props) => {
     <Modal open title="Edit device" onClose={() => setNewDevice(undefined)}>
       <form onSubmit={handleSubmit}>
         <div>
-          <input
-            type="text"
+          <Input
+            label="System name"
             name="system_name"
-            placeholder="system name"
             onChange={handleInputChange}
-            required
             value={newDevice.system_name}
+            required
           />
         </div>
         <div>
@@ -57,21 +57,23 @@ export const EditDeviceModal = ({ device, onEditCallback }: Props) => {
           </select>
         </div>
         <div>
-          <input
-            type="text"
+          <Input
+            label="HDD capacity (GB)"
+            type="number"
             name="hdd_capacity"
-            placeholder="hdd capacity"
             onChange={handleInputChange}
             value={newDevice.hdd_capacity}
             required
           />
         </div>
-        <Button variant="secondary" onClick={() => setNewDevice(undefined)}>
-          Cancel
-        </Button>
-        <Button type="submit" variant="primary">
-          Add Device
-        </Button>
+        <div className="flex justify-end mt-2 gap-2">
+          <Button variant="secondary" onClick={() => setNewDevice(undefined)}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="primary">
+            Submit
+          </Button>
+        </div>
       </form>
     </Modal>
   )

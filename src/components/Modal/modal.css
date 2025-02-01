@@ -17,12 +17,5 @@
   background-color: #ffffff;
   border-radius: 4px;
   padding: 24px;
-  min-width: 320px;
-  max-width: 540px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 540px;
 }

@@ -11,7 +11,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = ({ children, icon, variant = 'primary', ...rest }: Props) => {
   return (
-    <button {...rest} className={cx('button', `button--${variant}`)}>
+    <button {...rest} className={cx('button', 'font-medium', 'px-3.5', `button--${variant}`)}>
       {icon}
       {children}
     </button>
