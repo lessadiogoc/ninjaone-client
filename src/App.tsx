@@ -1,5 +1,3 @@
-import { Layout } from './components/Layout/Layout'
-import NinjaOneLogo from './assets/NinjaOneLogo.svg'
 import AppleIcon from './assets/apple.svg?react'
 import WindowsIcon from './assets/windows.svg?react'
 import LinuxIcon from './assets/linux.svg?react'

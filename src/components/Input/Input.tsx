@@ -16,6 +16,7 @@ export const Input = ({ icon = null, type = 'text', label, style, onChange, ...r
         <input
           {...rest}
           type={type}
+          className="outline-0"
           onChange={(e) => onChange?.(e.target.value)}
           style={{
             width: '100%',
