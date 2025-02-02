@@ -15,6 +15,7 @@ import { DeleteDeviceModal } from './containers/DeleteDeviceModal'
 import { Device, DeviceType } from './types'
 import { Input } from './components/Input/Input'
 import { Select } from './components/Select/Select'
+import { Menu, MenuItem } from './components/Menu/Menu'
 
 const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
@@ -62,7 +63,6 @@ function App() {
       result = result.filter((device) => device.type === deviceType)
     }
 
-    // Sort
     result.sort((a: Device, b: Device) => {
       if (sortBy === 'hdd_asc') {
         return Number(a.hdd_capacity) - Number(b.hdd_capacity)
@@ -83,10 +83,8 @@ function App() {
     return result
   }, [filters, devices])
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-
-    setFilters({ ...filters, [name]: value })
+  const onFilterChange = (field: keyof typeof filters) => (value: string) => {
+    setFilters({ ...filters, [field]: value })
   }
 
   const fetchDevices = async () => {
@@ -122,9 +120,21 @@ function App() {
 
         <div className="flex justify-between items-center mb-5">
           <div className="flex gap-2">
-            <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={handleFilterChange} />
-            <Select name="deviceType" options={DEVICE_OPTIONS} onChange={handleFilterChange} />
-            <Select name="sortBy" options={SORT_OPTIONS} onChange={handleFilterChange} />
+            <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={onFilterChange('search')} />
+            <Select
+              name="deviceType"
+              options={DEVICE_OPTIONS}
+              onChange={onFilterChange('deviceType')}
+              prefix="Device Type:"
+              value={filters.deviceType}
+            />
+            <Select
+              name="sortBy"
+              options={SORT_OPTIONS}
+              onChange={onFilterChange('sortBy')}
+              prefix="Sort by:"
+              value={filters.sortBy}
+            />
           </div>
           <Button type="button" icon={<Refresh />} variant="flat" onClick={fetchDevices} />
         </div>
@@ -138,7 +148,7 @@ function App() {
               {filteredDevices.map((device: Device) => (
                 <div
                   key={device.id}
-                  className="flex items-center justify-between p-4 border-b-gray-200 border-b-1 hover:bg-gray-200"
+                  className="flex items-center justify-between p-4 border-b-gray-200 border-b-1 hover:bg-gray-100"
                 >
                   <div>
                     <div className="flex items-center gap-1 text-md text-gray-800">
@@ -150,8 +160,12 @@ function App() {
                     </p>
                   </div>
                   <div>
-                    <button onClick={() => setDeviceToEdit({ ...device })}>Edit</button>
-                    <button onClick={() => setDeviceToDelete({ ...device })}>Delete</button>
+                    <Menu>
+                      <MenuItem onClick={() => setDeviceToEdit({ ...device })}>Edit</MenuItem>
+                      <MenuItem onClick={() => setDeviceToDelete({ ...device })} variant="danger">
+                        Delete
+                      </MenuItem>
+                    </Menu>
                   </div>
                 </div>
               ))}

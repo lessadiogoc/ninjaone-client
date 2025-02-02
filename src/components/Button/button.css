@@ -35,3 +35,7 @@
   background-color: transparent;
   color: var(--text-darker);
 }
+
+.button--flat:hover {
+  background-color: var(--color-gray-200);
+}

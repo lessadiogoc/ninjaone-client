@@ -36,10 +36,8 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
     onCreateCallback?.()
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-
-    setNewDevice({ ...newDevice, [name]: value })
+  const onFieldChange = (field: keyof Device) => (value: string) => {
+    setNewDevice({ ...newDevice, [field]: value })
   }
 
   return (
@@ -49,21 +47,20 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
           <div>
             <Input
               label="System name *"
-              type="text"
               name="system_name"
-              onChange={handleInputChange}
+              onChange={onFieldChange('system_name')}
               value={newDevice.system_name}
               required
             />
           </div>
           <div>
             <Select
-              name="type"
               label="Device type *"
-              required
+              name="type"
               value={newDevice.type}
-              onChange={handleInputChange}
+              onChange={onFieldChange('type')}
               options={DEVICE_OPTIONS}
+              required
             />
           </div>
           <div>
@@ -71,7 +68,7 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
               label="HDD capacity (GB) *"
               type="number"
               name="hdd_capacity"
-              onChange={handleInputChange}
+              onChange={onFieldChange('hdd_capacity')}
               value={newDevice.hdd_capacity}
               required
             />
