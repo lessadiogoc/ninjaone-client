@@ -24,9 +24,12 @@ export const DeleteDeviceModal = ({ device, onClose, onDeleteCallback }: Props) 
 
   return (
     <Modal open title="Delete device?" onClose={onClose}>
-      <p>You are about to delete the device {device?.system_name}. This action cannot be undone.</p>
+      <p className="text-sm">
+        You are about to delete the device <span className="font-medium">{device?.system_name}</span>. This action
+        cannot be undone.
+      </p>
       <div className="flex justify-end mt-2 gap-2">
-        <Button variant="secondary" onClick={onClose}>
+        <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
         </Button>
         <Button variant="danger" onClick={handleDelete}>
