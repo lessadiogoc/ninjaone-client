@@ -16,6 +16,7 @@ import { Device, DeviceType } from './types'
 import { Input } from './components/Input/Input'
 import { Select } from './components/Select/Select'
 import { Menu, MenuItem } from './components/Menu/Menu'
+import { Header } from './components/Header/Header'
 
 const DEVICE_LABELS: Record<DeviceType, string> = {
   WINDOWS: 'Windows workstation',
@@ -103,13 +104,7 @@ function App() {
 
   return (
     <>
-      <header style={{ background: '#002a42' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center" style={{ height: 50 }}>
-            <img src={NinjaOneLogo} className="logo" alt="Ninja One" width="120" />
-          </div>
-        </div>
-      </header>
+      <Header />
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center my-6">
           <h1 className="text-2xl font-medium">Devices</h1>
