@@ -62,12 +62,8 @@ function App() {
       result = result.filter((device) => device.type === deviceType)
     }
 
-    // sort
-    result.sort((a, b) => {
-      if (sortBy === 'hdd_desc') {
-        return Number(b.hdd_capacity) - Number(a.hdd_capacity)
-      }
-
+    // Sort
+    result.sort((a: Device, b: Device) => {
       if (sortBy === 'hdd_asc') {
         return Number(a.hdd_capacity) - Number(b.hdd_capacity)
       }
@@ -79,6 +75,9 @@ function App() {
       if (sortBy === 'name_asc') {
         return a.system_name.localeCompare(b.system_name)
       }
+
+      // HDD Descending by default
+      return Number(b.hdd_capacity) - Number(a.hdd_capacity)
     })
 
     return result
@@ -131,24 +130,33 @@ function App() {
         </div>
 
         <div>
-          {filteredDevices.length === 0 && <p>No devices found.</p>}
-          {filteredDevices.map((device: Device) => (
-            <div key={device.id} className="flex items-center justify-between p-4 border-b-gray-200 border-b-1">
-              <div>
-                <div className="flex items-center gap-1 text-md text-gray-800">
-                  {DEVICE_ICONS[device.type]}
-                  <h3>{device.system_name}</h3>
+          {filteredDevices.length === 0 ? (
+            <p>No devices found.</p>
+          ) : (
+            <>
+              <h3 className="border-b-1 border-b-gray-300 pl-4 pb-2 text-sm font-medium">Device</h3>
+              {filteredDevices.map((device: Device) => (
+                <div
+                  key={device.id}
+                  className="flex items-center justify-between p-4 border-b-gray-200 border-b-1 hover:bg-gray-200"
+                >
+                  <div>
+                    <div className="flex items-center gap-1 text-md text-gray-800">
+                      {DEVICE_ICONS[device.type]}
+                      <h3>{device.system_name}</h3>
+                    </div>
+                    <p className="text-gray-500 text-sm">
+                      {DEVICE_LABELS[device.type]} - {device.hdd_capacity} GB
+                    </p>
+                  </div>
+                  <div>
+                    <button onClick={() => setDeviceToEdit({ ...device })}>Edit</button>
+                    <button onClick={() => setDeviceToDelete({ ...device })}>Delete</button>
+                  </div>
                 </div>
-                <p className="text-gray-500 text-sm">
-                  {DEVICE_LABELS[device.type]} - {device.hdd_capacity} GB
-                </p>
-              </div>
-              <div>
-                <button onClick={() => setDeviceToEdit({ ...device })}>Edit</button>
-                <button onClick={() => setDeviceToDelete({ ...device })}>Delete</button>
-              </div>
-            </div>
-          ))}
+              ))}
+            </>
+          )}
         </div>
       </Layout>
 
