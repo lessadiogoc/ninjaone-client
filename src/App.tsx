@@ -106,13 +106,13 @@ function App() {
   return (
     <>
       <header style={{ background: '#002a42' }}>
-        <Layout>
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center" style={{ height: 50 }}>
             <img src={NinjaOneLogo} className="logo" alt="Ninja One" width="120" />
           </div>
-        </Layout>
+        </div>
       </header>
-      <Layout>
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center my-6">
           <h1 className="text-2xl font-medium">Devices</h1>
           <Button variant="primary" icon={<Plus />} onClick={() => setNewDeviceModalOpen(true)}>
@@ -121,12 +121,12 @@ function App() {
         </div>
 
         <div className="flex justify-between items-center mb-5">
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="flex gap-2">
             <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={handleFilterChange} />
             <Select name="deviceType" options={DEVICE_OPTIONS} onChange={handleFilterChange} />
             <Select name="sortBy" options={SORT_OPTIONS} onChange={handleFilterChange} />
           </div>
-          <Button type="submit" icon={<Refresh />} variant="flat" />
+          <Button type="button" icon={<Refresh />} variant="flat" onClick={fetchDevices} />
         </div>
 
         <div>
@@ -158,7 +158,7 @@ function App() {
             </>
           )}
         </div>
-      </Layout>
+      </div>
 
       <DeleteDeviceModal
         device={deviceToDelete}
