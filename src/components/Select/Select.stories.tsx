@@ -3,12 +3,11 @@ import { fn } from '@storybook/test'
 
 import { Select } from './Select'
 
-// More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: 'Form/Select',
   component: Select,
+  decorators: [(fn) => <form className="min-h-[120px]">{fn()}</form>],
   parameters: {
-    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: 'centered',
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
@@ -17,8 +16,7 @@ const meta = {
   argTypes: {
     options: { control: 'object' },
   },
-  // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: { onClick: fn() },
+  args: { onChange: fn() },
 } satisfies Meta<typeof Select>
 
 export default meta
@@ -29,10 +27,33 @@ export const Default: Story = {
   args: {
     options: [
       {
-        value: 'desktop',
-        label: 'Desktop',
+        value: 'WINDOWS',
+        label: 'Windows',
+      },
+      {
+        value: 'LINUX',
+        label: 'Linux',
+      },
+    ],
+    name: 'device_type',
+    value: 'WINDOWS',
+  },
+}
+
+export const WithLabel: Story = {
+  args: {
+    options: [
+      {
+        value: 'WINDOWS',
+        label: 'Windows',
+      },
+      {
+        value: 'LINUX',
+        label: 'Linux',
       },
     ],
     label: 'Device type:',
+    name: 'device_type',
+    value: 'WINDOWS',
   },
 }
