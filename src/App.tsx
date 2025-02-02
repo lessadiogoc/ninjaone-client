@@ -1,31 +1,18 @@
-import AppleIcon from './assets/apple.svg?react'
-import WindowsIcon from './assets/windows.svg?react'
-import LinuxIcon from './assets/linux.svg?react'
 import Plus from './assets/plus.svg?react'
 import SearchIcon from './assets/search.svg?react'
 import Refresh from './assets/refresh.svg?react'
 import { Button } from './components/Button/Button'
-import { ReactElement, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getDevices } from './data/get-devices'
 import { EditDeviceModal } from './containers/EditDeviceModal'
 import { CreateDeviceModal } from './containers/CreateDeviceModal'
 import { DeleteDeviceModal } from './containers/DeleteDeviceModal'
-import { Device, DeviceType } from './types'
+import { Device } from './types'
 import { Input } from './components/Input/Input'
 import { Select } from './components/Select/Select'
-import { Menu, MenuItem } from './components/Menu/Menu'
 import { Header } from './components/Header/Header'
+import { DevicesTable } from './containers/DevicesTable/DevicesTable'
 
-const DEVICE_LABELS: Record<DeviceType, string> = {
-  WINDOWS: 'Windows workstation',
-  LINUX: 'Linux workstation',
-  MAC: 'Mac workstation',
-}
-const DEVICE_ICONS: Record<DeviceType, ReactElement> = {
-  WINDOWS: <WindowsIcon />,
-  LINUX: <LinuxIcon />,
-  MAC: <AppleIcon />,
-}
 const DEVICE_OPTIONS = [
   { label: 'All', value: 'ALL' },
   { label: 'Windows', value: 'WINDOWS' },
@@ -132,39 +119,7 @@ function App() {
           <Button type="button" icon={<Refresh />} variant="flat" onClick={fetchDevices} />
         </div>
 
-        <div>
-          {filteredDevices.length === 0 ? (
-            <p>No devices found.</p>
-          ) : (
-            <>
-              <h3 className="border-b-1 border-b-gray-300 pl-4 pb-2 text-sm font-medium">Device</h3>
-              {filteredDevices.map((device: Device) => (
-                <div
-                  key={device.id}
-                  className="flex items-center justify-between p-4 border-b-gray-200 border-b-1 hover:bg-gray-100"
-                >
-                  <div>
-                    <div className="flex items-center gap-1 text-md text-gray-800">
-                      {DEVICE_ICONS[device.type]}
-                      <h3>{device.system_name}</h3>
-                    </div>
-                    <p className="text-gray-500 text-sm">
-                      {DEVICE_LABELS[device.type]} - {device.hdd_capacity} GB
-                    </p>
-                  </div>
-                  <div>
-                    <Menu>
-                      <MenuItem onClick={() => setDeviceToEdit({ ...device })}>Edit</MenuItem>
-                      <MenuItem onClick={() => setDeviceToDelete({ ...device })} variant="danger">
-                        Delete
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
+        <DevicesTable devices={filteredDevices} onEditClick={setDeviceToEdit} onDeleteClick={setDeviceToDelete} />
       </div>
 
       <DeleteDeviceModal
