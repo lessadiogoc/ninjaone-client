@@ -1,7 +1,7 @@
-import { Modal } from '../components/Modal/Modal'
-import { Button } from '../components/Button/Button'
-import { Device } from '../types'
-import { deleteDevice } from '../data/delete-device'
+import { Modal } from '../../components/Modal/Modal'
+import { Button } from '../../components/Button/Button'
+import { Device } from '../../types'
+import { deleteDevice } from '../../data/delete-device'
 
 interface Props {
   onDeleteCallback?: () => void

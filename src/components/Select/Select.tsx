@@ -30,6 +30,7 @@ export const Select = ({ label, style, options, value, name, prefix, onChange, r
     <>
       {label ? <label className="block mb-1">{label}</label> : null}
       <div
+        data-cy={`select-${name}`}
         className="relative cursor-pointer flex items-center justify-between gap-2 p-2 border-1 border-gray-300 rounded-sm "
         style={{ height: 38, ...style }}
         id={id}

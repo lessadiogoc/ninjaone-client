@@ -1,15 +1,14 @@
-import { useState } from 'react'
-import { Modal } from '../components/Modal/Modal'
-import { Button } from '../components/Button/Button'
-import { Device } from '../types'
-import { createDevice } from '../data/create-device'
-import { Input } from '../components/Input/Input'
-import { Select } from '../components/Select/Select'
+import { useEffect, useState } from 'react'
+import { Modal } from '../../components/Modal/Modal'
+import { Button } from '../../components/Button/Button'
+import { Device } from '../../types'
+import { updateDevice } from '../../data/update-device'
+import { Input } from '../../components/Input/Input'
+import { Select } from '../../components/Select/Select'
 
 interface Props {
-  onCreateCallback?: () => void
-  onClose: () => void
-  open: boolean
+  device?: Device
+  onEditCallback?: () => void
 }
 
 const DEVICE_OPTIONS = [
@@ -18,22 +17,25 @@ const DEVICE_OPTIONS = [
   { label: 'Mac', value: 'MAC' },
 ]
 
-const DEFAULT_VALUE: Omit<Device, 'id'> = {
-  system_name: '',
-  type: 'WINDOWS',
-  hdd_capacity: '',
-}
+export const EditDeviceModal = ({ device, onEditCallback }: Props) => {
+  const [newDevice, setNewDevice] = useState<Device>()
 
-export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) => {
-  const [newDevice, setNewDevice] = useState<Omit<Device, 'id'>>({ ...DEFAULT_VALUE })
+  useEffect(() => {
+    if (device) {
+      setNewDevice({ ...device })
+    }
+  }, [device])
+
+  if (!newDevice) {
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    await createDevice(newDevice)
-    onClose()
-    setNewDevice({ ...DEFAULT_VALUE })
-    onCreateCallback?.()
+    await updateDevice(newDevice)
+    setNewDevice(undefined)
+    onEditCallback?.()
   }
 
   const onFieldChange = (field: keyof Device) => (value: string) => {
@@ -41,7 +43,7 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
   }
 
   return (
-    <Modal open={open} title="Add device" onClose={onClose}>
+    <Modal open title="Edit device" onClose={() => setNewDevice(undefined)}>
       <form onSubmit={handleSubmit}>
         <div className="flex gap-3 flex-col">
           <div>
@@ -57,10 +59,10 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
             <Select
               label="Device type *"
               name="type"
+              required
               value={newDevice.type}
               onChange={onFieldChange('type')}
               options={DEVICE_OPTIONS}
-              required
             />
           </div>
           <div>
@@ -75,11 +77,11 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
           </div>
         </div>
         <div className="flex justify-end mt-8 gap-2">
-          <Button type="button" variant="secondary" onClick={onClose}>
+          <Button type="button" variant="secondary" onClick={() => setNewDevice(undefined)}>
             Cancel
           </Button>
           <Button type="submit" variant="primary">
-            Add Device
+            Submit
           </Button>
         </div>
       </form>
