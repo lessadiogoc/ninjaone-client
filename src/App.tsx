@@ -98,8 +98,8 @@ function App() {
           </Button>
         </div>
 
-        <div className="flex justify-between items-center mb-5">
-          <div className="flex flex-col gap-2 lg:flex-row">
+        <div className="flex justify-between items-stretch gap-2 flex-col lg:flex-row lg:items-center lg:gap-0 mb-5">
+          <div className="flex flex-col lg:flex-row gap-2">
             <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={onFilterChange('search')} />
             <Select
               name="deviceType"
