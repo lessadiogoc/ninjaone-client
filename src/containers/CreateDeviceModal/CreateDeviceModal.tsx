@@ -79,7 +79,7 @@ export const CreateDeviceModal = ({ open, onClose, onCreateCallback }: Props) =>
             Cancel
           </Button>
           <Button type="submit" variant="primary">
-            Add Device
+            Submit
           </Button>
         </div>
       </form>

@@ -16,7 +16,7 @@ export const Modal = ({ open, title, onClose, children }: Props) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="bg-white rounded-sm p-6 mx-6 max-w-[540px] w-full md:w-[540px]">
         <div className="flex items-center justify-between mb-3.5">
           <h4 className="text-2xl font-medium">{title}</h4>
           <Button variant="flat" onClick={onClose}>

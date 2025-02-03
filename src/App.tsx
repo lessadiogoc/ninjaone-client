@@ -99,7 +99,7 @@ function App() {
         </div>
 
         <div className="flex justify-between items-center mb-5">
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 lg:flex-row">
             <Input icon={<SearchIcon />} name="search" placeholder="Search" onChange={onFilterChange('search')} />
             <Select
               name="deviceType"
