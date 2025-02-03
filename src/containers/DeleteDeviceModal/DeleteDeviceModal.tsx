@@ -32,7 +32,7 @@ export const DeleteDeviceModal = ({ device, onClose, onDeleteCallback }: Props) 
         <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={handleDelete}>
+        <Button type="button" variant="danger" onClick={handleDelete}>
           Delete
         </Button>
       </div>
