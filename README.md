@@ -31,3 +31,17 @@ yarn storybook
 ```
 
 It will start storybook at http://localhost:6006/
+
+### Tests
+
+To run component tests, just run:
+
+```bash
+yarn component-test:open
+```
+
+or run them in headless mode:
+
+```bash
+yarn component-test
+```
